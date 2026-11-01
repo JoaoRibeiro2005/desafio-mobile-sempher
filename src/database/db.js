@@ -27,6 +27,17 @@ async function openAndSetup() {
       category TEXT,
       updated_at TEXT NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS cart_items (
+      product_id INTEGER PRIMARY KEY NOT NULL,
+      title TEXT NOT NULL,
+      price REAL NOT NULL,
+      thumbnail TEXT,
+      quantity INTEGER NOT NULL CHECK (quantity > 0),
+      sync_status TEXT NOT NULL DEFAULT 'pending',
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
   `);
 
   return db;
