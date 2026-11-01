@@ -9,17 +9,22 @@ import {
   StyleSheet,
 } from 'react-native';
 import { getCachedProduct, fetchProduct } from '../services/productsService';
+import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/formatPrice';
 
 export default function ProductDetailScreen({ route }) {
   // O id chega pela navegação (navigation.navigate('ProductDetail', { productId }))
   const { productId } = route.params;
 
+  const { items, addItem, error: cartError } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fromCache, setFromCache] = useState(false); // API falhou, mostrando dados salvos
   const [attempt, setAttempt] = useState(0); // muda para tentar de novo
+
+  // Quantas unidades deste produto já estão no carrinho
+  const quantityInCart = items.find((item) => item.product_id === productId)?.quantity ?? 0;
 
   useEffect(() => {
     let active = true; // vira false se o usuário sair da tela antes da resposta
@@ -94,6 +99,10 @@ export default function ProductDetailScreen({ route }) {
         {product.description ? (
           <Text style={styles.description}>{product.description}</Text>
         ) : null}
+
+        <Button title="Adicionar ao carrinho" onPress={() => addItem(product)} />
+        {quantityInCart > 0 && <Text style={styles.inCart}>No carrinho: {quantityInCart}</Text>}
+        {cartError && <Text style={styles.cartError}>{cartError}</Text>}
       </View>
     </ScrollView>
   );
@@ -110,4 +119,6 @@ const styles = StyleSheet.create({
   price: { fontSize: 20, color: '#2e7d32', fontWeight: '600' },
   category: { fontSize: 14, color: '#666', textTransform: 'capitalize' },
   description: { fontSize: 16, lineHeight: 22, marginTop: 8 },
+  inCart: { textAlign: 'center', color: '#2e7d32', fontWeight: '600' },
+  cartError: { textAlign: 'center', color: '#b71c1c' },
 });
