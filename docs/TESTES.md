@@ -44,6 +44,20 @@ Cada linha deve ser preenchida só depois de executar o teste.
 | Produto inexistente, sem cache | `productId: 9999` temporário na lista | "Erro do servidor (404)." e botão "Tentar novamente" | OK |
 | Voltar rápido da tela | Abrir e voltar várias vezes seguidas | Sem avisos do React no terminal | OK |
 
+## Etapa 5: carrinho local
+
+| Cenário | Como testei | Resultado esperado | Resultado |
+| --- | --- | --- | --- |
+| Adicionar ao carrinho | Tocar em "Adicionar ao carrinho" nos detalhes | Contador do cabeçalho sobe e aparece "No carrinho: 1" | A preencher |
+| Mesmo produto de novo | Adicionar o mesmo produto 3 vezes | Uma linha com quantidade 3 | A preencher |
+| Produtos diferentes | Adicionar 3 produtos distintos | 3 linhas, na ordem de inclusão | A preencher |
+| Total | Conferir com calculadora | Soma de preço vezes quantidade | A preencher |
+| Mais e menos | Usar os botões de quantidade | "−" desabilitado em 1; subtotal e total atualizam | A preencher |
+| Remover | Remover itens até esvaziar | Total atualiza e aparece "Seu carrinho está vazio." | A preencher |
+| Toques rápidos | Tocar no "+" 10 vezes seguidas | Quantidade final igual ao número de toques | A preencher |
+| Persistência | Fechar o Expo Go por completo e reabrir | O carrinho continua com os mesmos itens | A preencher |
+| Carrinho offline | Modo avião e adicionar um produto | Funciona normalmente | A preencher |
+
 ## Limitações conhecidas
 
 - **Sem recarga automática ao reconectar.** A tela só tenta de novo quando o usuário rola até o fim, puxa para atualizar ou toca no banner. A causa é que o app ainda não detecta mudanças de conectividade: o `onEndReached` só dispara ao chegar perto do fim da lista, e o banner só some quando uma requisição dá certo. Será resolvido com `@react-native-community/netinfo` na etapa de sincronização.
