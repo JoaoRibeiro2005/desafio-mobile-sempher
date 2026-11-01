@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, FlatList, Button, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, FlatList, Button, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native';
 import ProductCard from '../components/ProductCard';
 import { getProducts, PAGE_SIZE } from '../services/productsService';
 
@@ -77,7 +77,11 @@ export default function ProductListScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {error && <Text style={styles.banner}>{error}</Text>}
+      {error && (
+  <TouchableOpacity onPress={() => loadProducts()}>
+    <Text style={styles.banner}>{error} Toque para tentar novamente.</Text>
+  </TouchableOpacity>
+)}
       <FlatList
         data={products}
         keyExtractor={(item) => String(item.id)}
