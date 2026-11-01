@@ -3,6 +3,7 @@ import {
   saveProducts,
   getCachedProducts,
   countCachedProducts,
+  getCachedProductById,
 } from '../database/productsRepository';
 
 export const PAGE_SIZE = 20;
@@ -19,8 +20,21 @@ export async function getProducts({ limit = PAGE_SIZE, skip = 0 } = {}) {
   }
 }
 
-export function getProductById(id) {
-  return request(`/products/${id}`);
+// Lê um produto salvo no SQLite (ou null, se não houver)
+export async function getCachedProduct(id) {
+  try {
+    return (await getCachedProductById(id)) ?? null;
+  } catch (e) {
+    console.warn('Não foi possível ler o produto salvo:', e);
+    return null;
+  }
+}
+
+// Busca um produto na API e atualiza o cache
+export async function fetchProduct(id) {
+  const product = await request(`/products/${id}`);
+  await saveToCache([product]);
+  return product;
 }
 
 // Falha ao salvar o cache não pode derrubar a tela: o usuário já tem os dados

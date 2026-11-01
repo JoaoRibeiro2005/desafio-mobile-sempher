@@ -30,3 +30,9 @@ export async function countCachedProducts() {
   const row = await db.getFirstAsync('SELECT COUNT(*) AS total FROM products');
   return row.total;
 }
+
+// Lê um produto salvo pelo id (devolve null se não existir)
+export async function getCachedProductById(id) {
+  const db = await getDb();
+  return db.getFirstAsync('SELECT * FROM products WHERE id = ?', [id]);
+}
