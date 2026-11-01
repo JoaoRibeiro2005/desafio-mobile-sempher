@@ -1,3 +1,4 @@
+import { Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -14,7 +15,12 @@ export default function App() {
         <Stack.Screen
           name="ProductList"
           component={ProductListScreen}
-          options={{ title: 'Produtos' }}
+          options={({ navigation }) => ({
+            title: 'Produtos',
+            headerRight: () => (
+              <Button title="Carrinho" onPress={() => navigation.navigate('Cart')} />
+            ),
+          })}
         />
         <Stack.Screen
           name="ProductDetail"
