@@ -58,6 +58,20 @@ Cada linha deve ser preenchida só depois de executar o teste.
 | Persistência | Fechar o Expo Go por completo e reabrir | O carrinho continua com os mesmos itens | OK |
 | Carrinho offline | Modo avião e adicionar um produto | Funciona normalmente | OK |
 
+## Etapa 6: fila de operações pendentes
+
+| Cenário | Como testei | Resultado esperado | Resultado |
+| --- | --- | --- | --- |
+| Uma operação | Adicionar um produto ao carrinho | 1 linha na fila (pending, attempts 0) e aviso "1 operação aguardando sincronização" | A preencher |
+| Mesmo produto 3 vezes | Adicionar o mesmo produto 3 vezes | 1 linha no carrinho (quantidade 3) e 3 operações com identificadores diferentes | A preencher |
+| Produtos diferentes | Adicionar mais 2 produtos | O aviso soma todas as operações | A preencher |
+| Remover descarta pendentes | Remover um produto adicionado 2 vezes | As 2 operações dele somem; as dos outros ficam | A preencher |
+| Quantidade é local | Usar "+" e "−" no carrinho | Total muda, número de operações não | A preencher |
+| Persistência da fila | Fechar o Expo Go e reabrir | O aviso mantém o mesmo número | A preencher |
+| Adicionar offline | Modo avião e adicionar um produto | Funciona e a fila cresce | A preencher |
+| Toques rápidos | 10 toques seguidos em "Adicionar ao carrinho" | Quantidade 10, 10 operações, sem erro | A preencher |
+| Tudo ou nada | Erro forçado depois de gravar o item | Item e operação não são gravados e aparece mensagem de erro | A preencher |
+
 ## Limitações conhecidas
 
 - **Sem recarga automática ao reconectar.** A tela só tenta de novo quando o usuário rola até o fim, puxa para atualizar ou toca no banner. A causa é que o app ainda não detecta mudanças de conectividade: o `onEndReached` só dispara ao chegar perto do fim da lista, e o banner só some quando uma requisição dá certo. Será resolvido com `@react-native-community/netinfo` na etapa de sincronização.
