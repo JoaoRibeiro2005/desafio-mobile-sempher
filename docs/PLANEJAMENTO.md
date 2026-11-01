@@ -195,3 +195,6 @@ Cada etapa deve virar um ou poucos commits pequenos, no formato `tipo: descriç�
 - **Aviso de dados salvos:** o serviço de produtos devolve `fromCache` e a tela mostra um aviso amarelo, sem componente separado por enquanto.
 - **Cache vazio para a página pedida:** o serviço relança o erro da API, e a tela mantém o banner de erro.
 - **Total offline:** vale a quantidade de produtos salvos, então a paginação para no fim do cache.
+- **Coluna `created_at` em `cart_items`:** acrescentada para manter os itens na ordem em que foram adicionados.
+- **Sem `cartService` por enquanto:** o contexto do carrinho usa o repositório direto. O serviço entra na etapa 6, quando existir regra de negócio (gravar o item e a operação pendente na mesma transação).
+- **Botão do carrinho no cabeçalho:** a tela de lista e a de detalhes mostram a quantidade de itens.
