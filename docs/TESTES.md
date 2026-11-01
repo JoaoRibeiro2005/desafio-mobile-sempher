@@ -48,15 +48,15 @@ Cada linha deve ser preenchida só depois de executar o teste.
 
 | Cenário | Como testei | Resultado esperado | Resultado |
 | --- | --- | --- | --- |
-| Adicionar ao carrinho | Tocar em "Adicionar ao carrinho" nos detalhes | Contador do cabeçalho sobe e aparece "No carrinho: 1" | A preencher |
-| Mesmo produto de novo | Adicionar o mesmo produto 3 vezes | Uma linha com quantidade 3 | A preencher |
-| Produtos diferentes | Adicionar 3 produtos distintos | 3 linhas, na ordem de inclusão | A preencher |
-| Total | Conferir com calculadora | Soma de preço vezes quantidade | A preencher |
-| Mais e menos | Usar os botões de quantidade | "−" desabilitado em 1; subtotal e total atualizam | A preencher |
-| Remover | Remover itens até esvaziar | Total atualiza e aparece "Seu carrinho está vazio." | A preencher |
-| Toques rápidos | Tocar no "+" 10 vezes seguidas | Quantidade final igual ao número de toques | A preencher |
-| Persistência | Fechar o Expo Go por completo e reabrir | O carrinho continua com os mesmos itens | A preencher |
-| Carrinho offline | Modo avião e adicionar um produto | Funciona normalmente | A preencher |
+| Adicionar ao carrinho | Tocar em "Adicionar ao carrinho" nos detalhes | Contador do cabeçalho sobe e aparece "No carrinho: 1" | OK |
+| Mesmo produto de novo | Adicionar o mesmo produto 3 vezes | Uma linha com quantidade 3 | OK |
+| Produtos diferentes | Adicionar 3 produtos distintos | 3 linhas, na ordem de inclusão | OK |
+| Total | Conferir com calculadora | Soma de preço vezes quantidade | OK |
+| Mais e menos | Usar os botões de quantidade | "−" desabilitado em 1; subtotal e total atualizam | OK |
+| Remover | Remover itens até esvaziar | Total atualiza e aparece "Seu carrinho está vazio." | OK |
+| Toques rápidos | Tocar no "+" 10 vezes seguidas | Quantidade final igual ao número de toques | OK |
+| Persistência | Fechar o Expo Go por completo e reabrir | O carrinho continua com os mesmos itens | OK |
+| Carrinho offline | Modo avião e adicionar um produto | Funciona normalmente | OK |
 
 ## Limitações conhecidas
 
