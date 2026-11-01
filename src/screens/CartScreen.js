@@ -4,7 +4,7 @@ import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/formatPrice';
 
 export default function CartScreen() {
-  const { items, total, loading, error, changeQuantity, removeItem } = useCart();
+  const { items, total, pendingCount, loading, error, changeQuantity, removeItem } = useCart();
 
   if (loading) {
     return (
@@ -17,6 +17,13 @@ export default function CartScreen() {
   return (
     <View style={styles.container}>
       {error && <Text style={styles.banner}>{error}</Text>}
+      {pendingCount > 0 && (
+        <Text style={styles.pending}>
+          {pendingCount === 1
+            ? '1 operação aguardando sincronização'
+            : `${pendingCount} operações aguardando sincronização`}
+        </Text>
+      )}
       <FlatList
         data={items}
         keyExtractor={(item) => String(item.product_id)}
@@ -44,6 +51,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f2f2f2' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   banner: { backgroundColor: '#fdecea', color: '#b71c1c', padding: 8, textAlign: 'center' },
+  pending: { backgroundColor: '#fff8e1', color: '#8a6d00', padding: 8, textAlign: 'center' },
   empty: { textAlign: 'center', marginTop: 48, fontSize: 16, color: '#666' },
   footer: {
     flexDirection: 'row',

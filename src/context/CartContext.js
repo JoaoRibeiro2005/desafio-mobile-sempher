@@ -1,23 +1,26 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import {
-  getCartItems,
-  addToCart,
-  setCartQuantity,
-  removeFromCart,
-} from '../database/cartRepository';
+  loadCart,
+  addProductToCart,
+  changeCartQuantity,
+  removeProductFromCart,
+} from '../services/cartService';
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
+  const [pendingCount, setPendingCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Executa uma ação no banco e recarrega o carrinho para refletir o resultado
+  // Executa uma ação e recarrega o carrinho do SQLite para refletir o resultado
   async function run(action) {
     try {
       await action();
-      setItems(await getCartItems());
+      const cart = await loadCart();
+      setItems(cart.items);
+      setPendingCount(cart.pendingCount);
       setError(null);
       return true;
     } catch (e) {
@@ -35,17 +38,19 @@ export function CartProvider({ children }) {
   // Valores derivados: calculados a partir dos itens, sem estado próprio
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
   // Soma em centavos para evitar erros de arredondamento com decimais
-  const total = items.reduce((sum, item) => sum + Math.round(item.price * 100) * item.quantity, 0) / 100;
+  const total =
+    items.reduce((sum, item) => sum + Math.round(item.price * 100) * item.quantity, 0) / 100;
 
   const value = {
     items,
+    pendingCount,
     loading,
     error,
     itemCount,
     total,
-    addItem: (product) => run(() => addToCart(product)),
-    changeQuantity: (productId, quantity) => run(() => setCartQuantity(productId, quantity)),
-    removeItem: (productId) => run(() => removeFromCart(productId)),
+    addItem: (product) => run(() => addProductToCart(product)),
+    changeQuantity: (productId, quantity) => run(() => changeCartQuantity(productId, quantity)),
+    removeItem: (productId) => run(() => removeProductFromCart(productId)),
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
