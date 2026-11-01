@@ -187,3 +187,11 @@ Cada etapa deve virar um ou poucos commits pequenos, no formato `tipo: descriç�
 - O que acontece se o app fechar no meio de uma sincronização.
 - Por que o carrinho guarda uma cópia dos dados do produto.
 - Por que Context API em vez de Redux neste tamanho de projeto.
+
+## 10. Ajustes feitos durante a implementação
+
+- **Tabelas criadas por etapa:** o `db.js` cria só as tabelas que a etapa atual usa. A `products` veio na etapa 3; `cart_items` e `pending_operations` entram nas etapas do carrinho e da fila.
+- **Banners tocáveis:** o banner de erro e o aviso de dados salvos são tocáveis para tentar de novo. É uma mitigação, enquanto o app não detecta a volta da conexão (NetInfo).
+- **Aviso de dados salvos:** o serviço de produtos devolve `fromCache` e a tela mostra um aviso amarelo, sem componente separado por enquanto.
+- **Cache vazio para a página pedida:** o serviço relança o erro da API, e a tela mantém o banner de erro.
+- **Total offline:** vale a quantidade de produtos salvos, então a paginação para no fim do cache.
