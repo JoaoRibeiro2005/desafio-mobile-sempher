@@ -34,6 +34,16 @@ Cada linha deve ser preenchida só depois de executar o teste.
 | Erro do servidor com cache | Trocar `/products` por `/produtos` | Lista salva com aviso amarelo, em vez do erro 404 | OK |
 | Imagens offline | Observar a lista nos testes de abrir offline e puxar para atualizar | Só registrar: podem aparecer ou ficar em branco | OK. Somente algumas imagens iniciais aparecem |
 
+## Etapa 4: tela de detalhes
+
+| Cenário | Como testei | Resultado esperado | Resultado |
+| --- | --- | --- | --- |
+| Detalhes online | Tocar num produto com internet | Imagem, nome, preço, categoria e descrição | A preencher |
+| Detalhes offline, com dados salvos | Modo avião e tocar num produto | Abre na hora com aviso amarelo | A preencher |
+| Detalhes ao reconectar | Desligar o modo avião e abrir o produto de novo | Sem aviso amarelo | A preencher |
+| Produto inexistente, sem cache | `productId: 9999` temporário na lista | "Erro do servidor (404)." e botão "Tentar novamente" | A preencher |
+| Voltar rápido da tela | Abrir e voltar várias vezes seguidas | Sem avisos do React no terminal | A preencher |
+
 ## Limitações conhecidas
 
 - **Sem recarga automática ao reconectar.** A tela só tenta de novo quando o usuário rola até o fim, puxa para atualizar ou toca no banner. A causa é que o app ainda não detecta mudanças de conectividade: o `onEndReached` só dispara ao chegar perto do fim da lista, e o banner só some quando uma requisição dá certo. Será resolvido com `@react-native-community/netinfo` na etapa de sincronização.
