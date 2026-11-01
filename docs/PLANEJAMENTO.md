@@ -198,3 +198,8 @@ Cada etapa deve virar um ou poucos commits pequenos, no formato `tipo: descriç�
 - **Coluna `created_at` em `cart_items`:** acrescentada para manter os itens na ordem em que foram adicionados.
 - **Sem `cartService` por enquanto:** o contexto do carrinho usa o repositório direto. O serviço entra na etapa 6, quando existir regra de negócio (gravar o item e a operação pendente na mesma transação).
 - **Botão do carrinho no cabeçalho:** a tela de lista e a de detalhes mostram a quantidade de itens.
+- **Uma operação por toque:** cada "Adicionar ao carrinho" cria uma operação `ADD_TO_CART` com quantidade 1. O carrinho mostra uma linha por produto, e a fila guarda o histórico a enviar.
+- **`cartService`:** criado nesta etapa, para gravar o item e a operação na mesma transação.
+- **Transações serializadas:** o `db.js` expõe `runInTransaction`, que executa uma transação de cada vez, porque o SQLite não aceita transações aninhadas.
+- **Identificador da operação:** o `operation_uuid` é gerado com `Crypto.randomUUID()` (`expo-crypto`).
+- **Aviso de pendentes antecipado:** a tela do carrinho já mostra quantas operações aguardam sincronização. O restante do tratamento de erros fica na etapa 8.
