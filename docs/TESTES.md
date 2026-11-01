@@ -38,11 +38,11 @@ Cada linha deve ser preenchida só depois de executar o teste.
 
 | Cenário | Como testei | Resultado esperado | Resultado |
 | --- | --- | --- | --- |
-| Detalhes online | Tocar num produto com internet | Imagem, nome, preço, categoria e descrição | A preencher |
-| Detalhes offline, com dados salvos | Modo avião e tocar num produto | Abre na hora com aviso amarelo | A preencher |
-| Detalhes ao reconectar | Desligar o modo avião e abrir o produto de novo | Sem aviso amarelo | A preencher |
-| Produto inexistente, sem cache | `productId: 9999` temporário na lista | "Erro do servidor (404)." e botão "Tentar novamente" | A preencher |
-| Voltar rápido da tela | Abrir e voltar várias vezes seguidas | Sem avisos do React no terminal | A preencher |
+| Detalhes online | Tocar num produto com internet | Imagem, nome, preço, categoria e descrição | OK |
+| Detalhes offline, com dados salvos | Modo avião e tocar num produto | Abre na hora com aviso amarelo | OK |
+| Detalhes ao reconectar | Desligar o modo avião e abrir o produto de novo | Sem aviso amarelo | OK |
+| Produto inexistente, sem cache | `productId: 9999` temporário na lista | "Erro do servidor (404)." e botão "Tentar novamente" | OK |
+| Voltar rápido da tela | Abrir e voltar várias vezes seguidas | Sem avisos do React no terminal | OK |
 
 ## Limitações conhecidas
 
