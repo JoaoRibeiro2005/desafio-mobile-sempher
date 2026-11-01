@@ -1,5 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { View, Text, FlatList, Button, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  Button,
+  ActivityIndicator,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import ProductCard from '../components/ProductCard';
 import { getProducts, PAGE_SIZE } from '../services/productsService';
 
@@ -10,6 +18,7 @@ export default function ProductListScreen({ navigation }) {
   const [loadingMore, setLoadingMore] = useState(false); // próxima página
   const [refreshing, setRefreshing] = useState(false); // puxar para atualizar
   const [error, setError] = useState(null);
+  const [fromCache, setFromCache] = useState(false); // dados vindos do SQLite
   const isFetching = useRef(false); // evita duas buscas ao mesmo tempo
 
   const loadProducts = useCallback(
@@ -22,6 +31,7 @@ export default function ProductListScreen({ navigation }) {
         const data = await getProducts({ limit: PAGE_SIZE, skip });
         setProducts((prev) => (reset ? data.products : [...prev, ...data.products]));
         setTotal(data.total);
+        setFromCache(data.fromCache);
         setError(null);
       } catch (err) {
         setError(err.message);
@@ -65,7 +75,7 @@ export default function ProductListScreen({ navigation }) {
     );
   }
 
-  // Falhou e não há nada para mostrar
+  // Falhou, e não há nada na API nem salvo no SQLite
   if (error && products.length === 0) {
     return (
       <View style={styles.center}>
@@ -78,10 +88,17 @@ export default function ProductListScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {error && (
-  <TouchableOpacity onPress={() => loadProducts()}>
-    <Text style={styles.banner}>{error} Toque para tentar novamente.</Text>
-  </TouchableOpacity>
-)}
+        <TouchableOpacity onPress={() => loadProducts()}>
+          <Text style={styles.banner}>{error} Toque para tentar novamente.</Text>
+        </TouchableOpacity>
+      )}
+      {!error && fromCache && (
+        <TouchableOpacity onPress={() => loadProducts(true)}>
+          <Text style={styles.notice}>
+            Sem conexão. Exibindo dados salvos. Toque para atualizar.
+          </Text>
+        </TouchableOpacity>
+      )}
       <FlatList
         data={products}
         keyExtractor={(item) => String(item.id)}
@@ -106,5 +123,6 @@ const styles = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 12 },
   errorText: { fontSize: 16, textAlign: 'center' },
   banner: { backgroundColor: '#fdecea', color: '#b71c1c', padding: 8, textAlign: 'center' },
+  notice: { backgroundColor: '#fff8e1', color: '#8a6d00', padding: 8, textAlign: 'center' },
   footer: { marginVertical: 16 },
 });
