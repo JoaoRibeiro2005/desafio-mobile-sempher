@@ -25,14 +25,14 @@ Cada linha deve ser preenchida só depois de executar o teste.
 | --- | --- | --- | --- |
 | Cache sendo salvo | Abrir com internet e rolar 2 ou 3 páginas | Lista normal, sem aviso amarelo | OK |
 | Abrir sem internet, com cache | Falha simulada na primeira requisição (`firstCall` no `api.js`) e `r` | Lista com os produtos salvos e aviso amarelo | OK |
-| Persistência ao fechar o app | Com a falha simulada ativa, fechar o Expo Go por completo e abrir de novo | A lista salva continua aparecendo | A preencher |
-| Puxar para atualizar offline | Abrir com internet, ligar o modo avião e puxar a lista | Aviso amarelo com os produtos salvos | A preencher |
-| Voltar a conexão | Desligar o modo avião e tocar no aviso amarelo | Lista recarrega da API e o aviso some | A preencher |
-| Paginação offline | Com mais de 20 produtos salvos, abrir offline e rolar | Carrega as próximas páginas do cache e para no fim dos itens salvos | A preencher |
-| Sem internet e sem cache | Falha simulada com a tabela vazia (`DROP TABLE` temporário no `db.js`) | Tela de erro com "Sem conexão e nenhum dado salvo..." e botão | A preencher |
-| Perda de rede além do cache | Abrir com internet, ligar o modo avião e rolar até o fim | Banner vermelho de erro, como na etapa 2 | A preencher |
-| Erro do servidor com cache | Trocar `/products` por `/produtos` | Lista salva com aviso amarelo, em vez do erro 404 | A preencher |
-| Imagens offline | Observar a lista nos testes de abrir offline e puxar para atualizar | Só registrar: podem aparecer ou ficar em branco | A preencher |
+| Persistência ao fechar o app | Com a falha simulada ativa, fechar o Expo Go por completo e abrir de novo | A lista salva continua aparecendo | OK |
+| Puxar para atualizar offline | Abrir com internet, ligar o modo avião e puxar a lista | Aviso amarelo com os produtos salvos | OK |
+| Voltar a conexão | Desligar o modo avião e tocar no aviso amarelo | Lista recarrega da API e o aviso some | OK |
+| Paginação offline | Com mais de 20 produtos salvos, abrir offline e rolar | Carrega as próximas páginas do cache e para no fim dos itens salvos | OK |
+| Sem internet e sem cache | Falha simulada com a tabela vazia (`DROP TABLE` temporário no `db.js`) | Tela de erro com "Sem conexão e nenhum dado salvo..." e botão | OK |
+| Perda de rede além do cache | Abrir com internet, ligar o modo avião e rolar até o fim | Banner vermelho de erro, como na etapa 2 | OK |
+| Erro do servidor com cache | Trocar `/products` por `/produtos` | Lista salva com aviso amarelo, em vez do erro 404 | OK |
+| Imagens offline | Observar a lista nos testes de abrir offline e puxar para atualizar | Só registrar: podem aparecer ou ficar em branco | OK. Somente algumas imagens iniciais aparecem |
 
 ## Limitações conhecidas
 
