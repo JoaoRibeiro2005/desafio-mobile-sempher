@@ -217,3 +217,5 @@ As telas não falam direto com o banco nem com a API: elas chamam os **serviços
 | <img src="docs/imagens/04-lista-offline.jpeg" width="220"> | <img src="docs/imagens/05-carrinho-offline.jpeg" width="220"> | <img src="docs/imagens/06-reconexao.jpeg" width="220"> |
 
 O fluxo principal da demonstração: abrir a lista com internet, ligar o modo avião, ver a lista a partir dos dados salvos, adicionar um produto ao carrinho (o aviso mostra a operação pendente), desligar o modo avião e ver o item virar "Sincronizado".
+
+**Vídeo:** [Demonstração dos fluxos online e offline](https://youtube.com/shorts/Mq2sP_pMfgQ?is=zeJPMz6FOAJl7azP)
