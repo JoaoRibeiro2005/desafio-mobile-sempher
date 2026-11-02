@@ -32,12 +32,12 @@ export async function countUnsyncedOperations() {
   return row.total;
 }
 
-// Descarta as operações pendentes de adicionar um produto (usado ao removê-lo do carrinho)
+// Descarta as operações pendentes ou com falha de um produto (usado ao removê-lo do carrinho)
 export async function discardPendingAddOperations(productId) {
   const db = await getDb();
   const operations = await db.getAllAsync(
-    'SELECT id, payload FROM pending_operations WHERE type = ? AND status = ?',
-    [OPERATION_TYPES.ADD_TO_CART, OPERATION_STATUS.PENDING]
+    'SELECT id, payload FROM pending_operations WHERE type = ? AND status IN (?, ?)',
+    [OPERATION_TYPES.ADD_TO_CART, OPERATION_STATUS.PENDING, OPERATION_STATUS.FAILED]
   );
 
   for (const operation of operations) {
