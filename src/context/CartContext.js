@@ -8,6 +8,7 @@ import {
 } from '../services/cartService';
 import {
   syncPendingOperations,
+  retryFailedOperations,
   recoverInterruptedOperations,
   onSyncProgress,
 } from '../services/syncService';
@@ -18,15 +19,17 @@ export function CartProvider({ children }) {
   const { isOnline } = useConnectivity();
   const [items, setItems] = useState([]);
   const [pendingCount, setPendingCount] = useState(0);
+  const [failedCount, setFailedCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [ready, setReady] = useState(false); // o carrinho já foi carregado do SQLite
   const [error, setError] = useState(null);
 
-  // Lê o carrinho e o contador do SQLite e atualiza a tela
+  // Lê o carrinho e os contadores do SQLite e atualiza a tela
   async function refresh() {
     const cart = await loadCart();
     setItems(cart.items);
     setPendingCount(cart.pendingCount);
+    setFailedCount(cart.failedCount);
   }
 
   // Executa uma ação e recarrega o carrinho para refletir o resultado
@@ -82,6 +85,7 @@ export function CartProvider({ children }) {
   const value = {
     items,
     pendingCount,
+    failedCount,
     loading,
     error,
     itemCount,
@@ -94,6 +98,7 @@ export function CartProvider({ children }) {
     changeQuantity: (productId, quantity) => run(() => changeCartQuantity(productId, quantity)),
     removeItem: (productId) => run(() => removeProductFromCart(productId)),
     syncNow: () => syncPendingOperations(),
+    retryFailed: () => run(() => retryFailedOperations()),
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

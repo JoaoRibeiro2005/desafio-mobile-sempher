@@ -1,12 +1,23 @@
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import CartItem from '../components/CartItem';
+import StatusBanner from '../components/StatusBanner';
 import { useCart } from '../context/CartContext';
 import { useConnectivity } from '../context/ConnectivityContext';
 import { formatPrice } from '../utils/formatPrice';
 
 export default function CartScreen() {
-  const { items, total, pendingCount, loading, error, changeQuantity, removeItem, syncNow } =
-    useCart();
+  const {
+    items,
+    total,
+    pendingCount,
+    failedCount,
+    loading,
+    error,
+    changeQuantity,
+    removeItem,
+    syncNow,
+    retryFailed,
+  } = useCart();
   const { isOnline } = useConnectivity();
 
   if (loading) {
@@ -17,18 +28,26 @@ export default function CartScreen() {
     );
   }
 
+  const pendingText =
+    pendingCount === 1
+      ? '1 operação aguardando sincronização'
+      : `${pendingCount} operações aguardando sincronização`;
+
+  const failedText =
+    failedCount === 1
+      ? '1 operação não pôde ser enviada. Toque para tentar novamente.'
+      : `${failedCount} operações não puderam ser enviadas. Toque para tentar novamente.`;
+
   return (
     <View style={styles.container}>
-      {error && <Text style={styles.banner}>{error}</Text>}
+      {error && <StatusBanner type="error" text={error} />}
+      {failedCount > 0 && <StatusBanner type="error" text={failedText} onPress={retryFailed} />}
       {pendingCount > 0 && (
-        <TouchableOpacity onPress={syncNow}>
-          <Text style={styles.pending}>
-            {pendingCount === 1
-              ? '1 operação aguardando sincronização'
-              : `${pendingCount} operações aguardando sincronização`}
-            {isOnline ? '. Toque para sincronizar.' : '. Sem conexão.'}
-          </Text>
-        </TouchableOpacity>
+        <StatusBanner
+          type="warning"
+          text={`${pendingText}${isOnline ? '. Toque para sincronizar.' : '. Sem conexão.'}`}
+          onPress={syncNow}
+        />
       )}
       <FlatList
         data={items}
@@ -56,8 +75,6 @@ export default function CartScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f2f2f2' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  banner: { backgroundColor: '#fdecea', color: '#b71c1c', padding: 8, textAlign: 'center' },
-  pending: { backgroundColor: '#fff8e1', color: '#8a6d00', padding: 8, textAlign: 'center' },
   empty: { textAlign: 'center', marginTop: 48, fontSize: 16, color: '#666' },
   footer: {
     flexDirection: 'row',
