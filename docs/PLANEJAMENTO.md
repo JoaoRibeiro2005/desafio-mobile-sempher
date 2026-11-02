@@ -203,3 +203,5 @@ Cada etapa deve virar um ou poucos commits pequenos, no formato `tipo: descriç�
 - **Transações serializadas:** o `db.js` expõe `runInTransaction`, que executa uma transação de cada vez, porque o SQLite não aceita transações aninhadas.
 - **Identificador da operação:** o `operation_uuid` é gerado com `Crypto.randomUUID()` (`expo-crypto`).
 - **Aviso de pendentes antecipado:** a tela do carrinho já mostra quantas operações aguardam sincronização. O restante do tratamento de erros fica na etapa 8.
+- **Operações com falha:** o carrinho mostra um aviso vermelho com a quantidade de operações `failed` e permite reenviá-las. O reenvio devolve as operações para a fila com as tentativas zeradas. Elas continuam sem reenvio automático, de propósito, para não repetir uma falha permanente indefinidamente.
+- **`StatusBanner`:** componente criado para os avisos do carrinho. As telas de lista e detalhes mantêm os avisos próprios.

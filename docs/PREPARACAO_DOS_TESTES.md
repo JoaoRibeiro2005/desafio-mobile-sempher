@@ -308,6 +308,16 @@ if (RESET_CART_DATA) {
 ```
  
 O diagnóstico mostrou 16 operações failed de 3 produtos, que mantinham os itens deles em "Aguardando sincronização". Depois da correção, remover o item descarta essas operações, e a lista `NÃO SINCRONIZADAS` fica vazia.
+
+## Etapa 8: operações com falha
+
+| Cenário | Alteração temporária |
+| --- | --- |
+| Aviso de operação com falha | H1 com `SIMULATE_CART_SERVER_ERROR = true` |
+| Reenviar com o servidor falhando | H1 com `SIMULATE_CART_SERVER_ERROR = true` |
+| Falha sobrevive ao fechar o app | H1 com `SIMULATE_CART_SERVER_ERROR = true` |
+| Reenviar com o servidor corrigido | H1, voltando `SIMULATE_CART_SERVER_ERROR = false` |
+| Remover item com operação com falha | H1 com `SIMULATE_CART_SERVER_ERROR = true` |
  
 ## Conferir que nada disso ficou no código entregue
  
