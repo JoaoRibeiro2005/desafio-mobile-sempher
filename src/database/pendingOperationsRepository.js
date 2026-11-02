@@ -32,6 +32,16 @@ export async function countUnsyncedOperations() {
   return row.total;
 }
 
+// Quantas operações desistiram depois de várias falhas do servidor
+export async function countFailedOperations() {
+  const db = await getDb();
+  const row = await db.getFirstAsync(
+    'SELECT COUNT(*) AS total FROM pending_operations WHERE status = ?',
+    [OPERATION_STATUS.FAILED]
+  );
+  return row.total;
+}
+
 // Descarta as operações pendentes ou com falha de um produto (usado ao removê-lo do carrinho)
 export async function discardPendingAddOperations(productId) {
   const db = await getDb();
@@ -106,6 +116,15 @@ export async function resetSyncingOperations() {
   await db.runAsync('UPDATE pending_operations SET status = ? WHERE status = ?', [
     OPERATION_STATUS.PENDING,
     OPERATION_STATUS.SYNCING,
+  ]);
+}
+
+// Devolve as operações com falha para a fila, com as tentativas zeradas
+export async function resetFailedOperations() {
+  const db = await getDb();
+  await db.runAsync('UPDATE pending_operations SET status = ?, attempts = 0 WHERE status = ?', [
+    OPERATION_STATUS.PENDING,
+    OPERATION_STATUS.FAILED,
   ]);
 }
 

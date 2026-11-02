@@ -10,15 +10,20 @@ import {
   OPERATION_TYPES,
   createPendingOperation,
   countUnsyncedOperations,
+  countFailedOperations,
   discardPendingAddOperations,
 } from '../database/pendingOperationsRepository';
 
 const USER_ID = 1; // o app não tem login: o carrinho é sempre do usuário 1
 
-// Lê o carrinho e quantas operações aguardam sincronização
+// Lê o carrinho, as operações aguardando sincronização e as que falharam
 export async function loadCart() {
-  const [items, pendingCount] = await Promise.all([getCartItems(), countUnsyncedOperations()]);
-  return { items, pendingCount };
+  const [items, pendingCount, failedCount] = await Promise.all([
+    getCartItems(),
+    countUnsyncedOperations(),
+    countFailedOperations(),
+  ]);
+  return { items, pendingCount, failedCount };
 }
 
 // O item no carrinho e a operação pendente são gravados juntos: ou os dois, ou nenhum

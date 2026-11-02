@@ -8,6 +8,7 @@ import {
   markOperationSynced,
   recordOperationFailure,
   resetSyncingOperations,
+  resetFailedOperations,
   hasUnsyncedOperationsForProduct,
 } from '../database/pendingOperationsRepository';
 
@@ -31,6 +32,13 @@ function notify() {
 // ainda, então o que ficou em "syncing" foi interrompido pelo fechamento do app
 export async function recoverInterruptedOperations() {
   await runInTransaction(() => resetSyncingOperations());
+}
+
+// Devolve as operações com falha para a fila (com tentativas zeradas) e tenta enviá-las
+export async function retryFailedOperations() {
+  await runInTransaction(() => resetFailedOperations());
+  notify();
+  await syncPendingOperations();
 }
 
 // Envia as operações pendentes para a API, da mais antiga para a mais nova
