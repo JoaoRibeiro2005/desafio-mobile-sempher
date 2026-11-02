@@ -92,11 +92,11 @@ Cada linha deve ser preenchida só depois de executar o teste.
 
 | Cenário | Como testei | Resultado esperado | Resultado |
 | --- | --- | --- | --- |
-| Aviso de operação com falha | `SIMULATE_CART_SERVER_ERROR = true`, adicionar um produto e tocar no aviso até a 5ª falha | Aparece o aviso vermelho com a contagem de operações com falha | A preencher |
-| Reenviar com o servidor falhando | Tocar no aviso vermelho com a simulação ainda ligada | A operação volta para a fila com tentativas zeradas (aviso amarelo) | A preencher |
-| Falha sobrevive ao fechar o app | Fechar e reabrir o app com a operação em falha | O aviso vermelho continua e nada é reenviado sozinho | A preencher |
-| Reenviar com o servidor corrigido | Desligar a simulação e tocar no aviso vermelho | A operação é enviada, o aviso some e o item fica "Sincronizado" | A preencher |
-| Remover item com operação com falha | Remover o item depois do aviso vermelho | O aviso vermelho some | A preencher |
+| Aviso de operação com falha | `SIMULATE_CART_SERVER_ERROR = true`, adicionar um produto e tocar no aviso até a 5ª falha | Aparece o aviso vermelho com a contagem de operações com falha | OK |
+| Reenviar com o servidor falhando | Tocar no aviso vermelho com a simulação ainda ligada | A operação volta para a fila com tentativas zeradas (aviso amarelo) | OK |
+| Falha sobrevive ao fechar o app | Fechar e reabrir o app com a operação em falha | O aviso vermelho continua e nada é reenviado sozinho | OK |
+| Reenviar com o servidor corrigido | Desligar a simulação e tocar no aviso vermelho | A operação é enviada, o aviso some e o item fica "Sincronizado" | OK |
+| Remover item com operação com falha | Remover o item depois do aviso vermelho | O aviso vermelho some | OK |
 
 ## Limitações conhecidas
 
