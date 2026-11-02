@@ -37,3 +37,12 @@ export async function removeFromCart(productId) {
   const db = await getDb();
   await db.runAsync('DELETE FROM cart_items WHERE product_id = ?', [productId]);
 }
+
+// Marca se o item já foi totalmente enviado ('synced') ou ainda não ('pending')
+export async function setCartItemSyncStatus(productId, status) {
+  const db = await getDb();
+  await db.runAsync('UPDATE cart_items SET sync_status = ? WHERE product_id = ?', [
+    status,
+    productId,
+  ]);
+}
