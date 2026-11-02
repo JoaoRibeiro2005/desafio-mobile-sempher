@@ -201,12 +201,79 @@ if (SIMULATE_ROLLBACK) {
 
 No cenário "Tudo ou nada", o esperado é que o item não entre no carrinho, que a fila não ganhe linha e que a tela de detalhes mostre a mensagem de erro, o que prova que a gravação do item e da operação é uma transação só. O `FILA:` não aparece nesse cenário, porque a falha impede o `loadCart`.
 
+## Etapa 7: conectividade e sincronização
+
+| Cenário | Alteração temporária |
+| --- | --- |
+| Envio online | H2 |
+| Adicionar offline | H2 e modo avião real |
+| Reconexão automática | H2 e modo avião real |
+| Várias offline, sem duplicar | H2 e H3 (para contar os envios), com modo avião real |
+| Toques rápidos com envio ativo | H2 e H3 |
+| Falha de rede no envio | H1 com `SIMULATE_CART_OFFLINE = true` e H2 |
+| Erro do servidor | H1 com `SIMULATE_CART_SERVER_ERROR = true` e H2 |
+| Remover antes de reconectar | H2 e H3, com modo avião real |
+| App fechado durante o envio | H2 e H3 com a linha do atraso de 8 segundos ativa |
+| Persistência da fila | H2, com modo avião real |
+
+**H1. Falhas simuladas só no carrinho** (`src/services/api.js`)
+
+Abaixo das constantes:
+
+```javascript
+const SIMULATE_CART_OFFLINE = false; // TEMPORÁRIO
+const SIMULATE_CART_SERVER_ERROR = false; // TEMPORÁRIO
+```
+
+Como primeiras linhas de dentro da função `request`:
+
+```javascript
+if (path.startsWith('/carts')) {
+  if (SIMULATE_CART_OFFLINE) {
+    throw new ApiError('Não foi possível conectar. Verifique sua internet.', {
+      isNetworkError: true,
+    });
+  }
+  if (SIMULATE_CART_SERVER_ERROR) {
+    throw new ApiError('Erro do servidor (500).', { status: 500 });
+  }
+}
+```
+
+**H2. Fila visível no terminal** (`src/services/cartService.js`)
+
+O import de `../database/db` ganha o `getDb`:
+
+```javascript
+import { getDb, runInTransaction } from '../database/db';
+```
+
+Dentro de `loadCart`, antes do `return`:
+
+```javascript
+// TEMPORÁRIO: mostra a fila no terminal
+const db = await getDb();
+const fila = await db.getAllAsync(
+  'SELECT id, status, attempts, last_error, synced_at FROM pending_operations'
+);
+console.log('FILA:', JSON.stringify(fila));
+```
+
+**H3. Contagem de envios e atraso** (`src/services/syncService.js`)
+
+Dentro do `try` do `processQueue`, antes de `await sendOperation(operation);`:
+
+```javascript
+console.log('ENVIANDO operação', operation.id);
+// await new Promise((resolve) => setTimeout(resolve, 8000)); // TEMPORÁRIO: só no teste de fechar o app
+```
+
 ## Conferir que nada disso ficou no código entregue
 
 Na raiz do projeto:
 
 ```
-git grep -n -E "TEMPORÁRIO|SIMULATE_|RESET_CACHE|SHOW_QUEUE_LOG|firstCall|9999" -- src App.js
+git grep -n -E "TEMPORÁRIO|SIMULATE_|RESET_CACHE|SHOW_QUEUE_LOG|ENVIANDO|FILA:|firstCall|9999" -- src App.js
 ```
 
 O comando não deve listar nenhuma linha.
