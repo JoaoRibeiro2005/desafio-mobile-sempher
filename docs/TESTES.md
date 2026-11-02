@@ -86,6 +86,7 @@ Cada linha deve ser preenchida só depois de executar o teste.
 | Remover antes de reconectar | Adicionar offline, remover e reconectar | Nada é enviado | OK |
 | App fechado durante o envio | Fechar o app com a operação em syncing | Volta para pending e é enviada na reabertura | OK. Com o app fechado durante o envio, a operação voltou para pending na reabertura e foi enviada de novo (possível envio duplicado nesse caso, ver Limitações conhecidas) |
 | Persistência da fila | Operação offline, fechar e reabrir com internet | É enviada na abertura | OK |
+| Remover item com operações failed | Remover os 3 itens presos e adicionar um de novo | As operações failed saem da fila e o item volta a sincronizar | OK. As operações failed foram descartadas ao remover os itens (a fila ficou vazia) e, ao adicionar o produto de novo, ele ficou "Sincronizado" |
 
 ## Limitações conhecidas
 
