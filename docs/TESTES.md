@@ -76,16 +76,16 @@ Cada linha deve ser preenchida só depois de executar o teste.
 
 | Cenário | Como testei | Resultado esperado | Resultado |
 | --- | --- | --- | --- |
-| Envio online | Adicionar um produto com internet | Operação passa por pending, syncing e synced; item "Sincronizado" | A preencher |
-| Adicionar offline | Modo avião e adicionar um produto | Operação pendente, item "Aguardando sincronização", aviso com "Sem conexão" | A preencher |
-| Reconexão automática | Desligar o modo avião | A operação é enviada sozinha e o aviso some | A preencher |
-| Várias offline, sem duplicar | Adicionar vários produtos offline e reconectar | Cada operação enviada uma única vez, na ordem | A preencher |
-| Toques rápidos com envio ativo | 10 toques seguidos online | 10 envios, sem repetição e sem erro | A preencher |
-| Falha de rede no envio | `SIMULATE_CART_OFFLINE = true` | Operação volta para pending sem gastar tentativa | A preencher |
-| Erro do servidor | `SIMULATE_CART_SERVER_ERROR = true` | Tentativas contadas; na 5ª vira failed | A preencher |
-| Remover antes de reconectar | Adicionar offline, remover e reconectar | Nada é enviado | A preencher |
-| App fechado durante o envio | Fechar o app com a operação em syncing | Volta para pending e é enviada na reabertura | A preencher |
-| Persistência da fila | Operação offline, fechar e reabrir com internet | É enviada na abertura | A preencher |
+| Envio online | Adicionar um produto com internet | Operação passa por pending, syncing e synced; item "Sincronizado" | OK |
+| Adicionar offline | Modo avião e adicionar um produto | Operação pendente, item "Aguardando sincronização", aviso com "Sem conexão" | OK |
+| Reconexão automática | Desligar o modo avião | A operação é enviada sozinha e o aviso some | OK |
+| Várias offline, sem duplicar | Adicionar vários produtos offline e reconectar | Cada operação enviada uma única vez, na ordem | OK |
+| Toques rápidos com envio ativo | 10 toques seguidos online | 10 envios, sem repetição e sem erro | OK |
+| Falha de rede no envio | `SIMULATE_CART_OFFLINE = true` | Operação volta para pending sem gastar tentativa | OK |
+| Erro do servidor | `SIMULATE_CART_SERVER_ERROR = true` | Tentativas contadas; na 5ª vira failed | OK |
+| Remover antes de reconectar | Adicionar offline, remover e reconectar | Nada é enviado | OK |
+| App fechado durante o envio | Fechar o app com a operação em syncing | Volta para pending e é enviada na reabertura | OK. Com o app fechado durante o envio, a operação voltou para pending na reabertura e foi enviada de novo (possível envio duplicado nesse caso, ver Limitações conhecidas) |
+| Persistência da fila | Operação offline, fechar e reabrir com internet | É enviada na abertura | OK |
 
 ## Limitações conhecidas
 
