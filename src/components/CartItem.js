@@ -3,6 +3,7 @@ import { formatPrice } from '../utils/formatPrice';
 
 export default function CartItem({ item, onIncrease, onDecrease, onRemove }) {
   const canDecrease = item.quantity > 1;
+  const synced = item.sync_status === 'synced';
 
   return (
     <View style={styles.card}>
@@ -12,6 +13,9 @@ export default function CartItem({ item, onIncrease, onDecrease, onRemove }) {
           {item.title}
         </Text>
         <Text style={styles.price}>{formatPrice(item.price)}</Text>
+        <Text style={synced ? styles.synced : styles.waiting}>
+          {synced ? 'Sincronizado' : 'Aguardando sincronização'}
+        </Text>
         <View style={styles.controls}>
           <TouchableOpacity
             style={[styles.qtyButton, !canDecrease && styles.qtyButtonDisabled]}
@@ -48,6 +52,8 @@ const styles = StyleSheet.create({
   info: { flex: 1, marginLeft: 12 },
   title: { fontSize: 15, fontWeight: '600' },
   price: { fontSize: 13, color: '#666', marginTop: 2 },
+  waiting: { fontSize: 12, color: '#8a6d00', marginTop: 2 },
+  synced: { fontSize: 12, color: '#2e7d32', marginTop: 2 },
   controls: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 8 },
   qtyButton: {
     width: 30,

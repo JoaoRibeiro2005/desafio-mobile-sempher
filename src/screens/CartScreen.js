@@ -1,10 +1,13 @@
-import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet } from 'react-native';
 import CartItem from '../components/CartItem';
 import { useCart } from '../context/CartContext';
+import { useConnectivity } from '../context/ConnectivityContext';
 import { formatPrice } from '../utils/formatPrice';
 
 export default function CartScreen() {
-  const { items, total, pendingCount, loading, error, changeQuantity, removeItem } = useCart();
+  const { items, total, pendingCount, loading, error, changeQuantity, removeItem, syncNow } =
+    useCart();
+  const { isOnline } = useConnectivity();
 
   if (loading) {
     return (
@@ -18,11 +21,14 @@ export default function CartScreen() {
     <View style={styles.container}>
       {error && <Text style={styles.banner}>{error}</Text>}
       {pendingCount > 0 && (
-        <Text style={styles.pending}>
-          {pendingCount === 1
-            ? '1 operação aguardando sincronização'
-            : `${pendingCount} operações aguardando sincronização`}
-        </Text>
+        <TouchableOpacity onPress={syncNow}>
+          <Text style={styles.pending}>
+            {pendingCount === 1
+              ? '1 operação aguardando sincronização'
+              : `${pendingCount} operações aguardando sincronização`}
+            {isOnline ? '. Toque para sincronizar.' : '. Sem conexão.'}
+          </Text>
+        </TouchableOpacity>
       )}
       <FlatList
         data={items}

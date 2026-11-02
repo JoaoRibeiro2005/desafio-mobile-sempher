@@ -1,26 +1,39 @@
 import { createContext, useContext, useEffect, useState } from 'react';
+import { useConnectivity } from './ConnectivityContext';
 import {
   loadCart,
   addProductToCart,
   changeCartQuantity,
   removeProductFromCart,
 } from '../services/cartService';
+import {
+  syncPendingOperations,
+  recoverInterruptedOperations,
+  onSyncProgress,
+} from '../services/syncService';
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
+  const { isOnline } = useConnectivity();
   const [items, setItems] = useState([]);
   const [pendingCount, setPendingCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [ready, setReady] = useState(false); // o carrinho já foi carregado do SQLite
   const [error, setError] = useState(null);
 
-  // Executa uma ação e recarrega o carrinho do SQLite para refletir o resultado
+  // Lê o carrinho e o contador do SQLite e atualiza a tela
+  async function refresh() {
+    const cart = await loadCart();
+    setItems(cart.items);
+    setPendingCount(cart.pendingCount);
+  }
+
+  // Executa uma ação e recarrega o carrinho para refletir o resultado
   async function run(action) {
     try {
       await action();
-      const cart = await loadCart();
-      setItems(cart.items);
-      setPendingCount(cart.pendingCount);
+      await refresh();
       setError(null);
       return true;
     } catch (e) {
@@ -30,9 +43,34 @@ export function CartProvider({ children }) {
     }
   }
 
-  // Ao abrir o app, carrega o carrinho salvo
+  // Ao abrir o app: recupera operações interrompidas e carrega o carrinho salvo
   useEffect(() => {
-    run(async () => {}).finally(() => setLoading(false));
+    async function start() {
+      try {
+        await recoverInterruptedOperations();
+        await refresh();
+      } catch (e) {
+        console.warn('Erro ao carregar o carrinho:', e);
+        setError('Não foi possível carregar o carrinho.');
+      }
+      setLoading(false);
+      setReady(true);
+    }
+    start();
+  }, []);
+
+  // Ao abrir o app e sempre que a conexão voltar, tenta enviar as pendentes
+  useEffect(() => {
+    if (ready && isOnline) {
+      syncPendingOperations();
+    }
+  }, [ready, isOnline]);
+
+  // Quando a sincronização muda algo, a tela se atualiza
+  useEffect(() => {
+    return onSyncProgress(() => {
+      refresh().catch((e) => console.warn('Erro ao atualizar o carrinho:', e));
+    });
   }, []);
 
   // Valores derivados: calculados a partir dos itens, sem estado próprio
@@ -48,9 +86,14 @@ export function CartProvider({ children }) {
     error,
     itemCount,
     total,
-    addItem: (product) => run(() => addProductToCart(product)),
+    addItem: async (product) => {
+      const ok = await run(() => addProductToCart(product));
+      if (ok) syncPendingOperations(); // sem await: a tela não espera a rede
+      return ok;
+    },
     changeQuantity: (productId, quantity) => run(() => changeCartQuantity(productId, quantity)),
     removeItem: (productId) => run(() => removeProductFromCart(productId)),
+    syncNow: () => syncPendingOperations(),
   };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
