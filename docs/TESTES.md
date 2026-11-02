@@ -88,6 +88,16 @@ Cada linha deve ser preenchida só depois de executar o teste.
 | Persistência da fila | Operação offline, fechar e reabrir com internet | É enviada na abertura | OK |
 | Remover item com operações failed | Remover os 3 itens presos e adicionar um de novo | As operações failed saem da fila e o item volta a sincronizar | OK. As operações failed foram descartadas ao remover os itens (a fila ficou vazia) e, ao adicionar o produto de novo, ele ficou "Sincronizado" |
 
+## Etapa 8: operações com falha
+
+| Cenário | Como testei | Resultado esperado | Resultado |
+| --- | --- | --- | --- |
+| Aviso de operação com falha | `SIMULATE_CART_SERVER_ERROR = true`, adicionar um produto e tocar no aviso até a 5ª falha | Aparece o aviso vermelho com a contagem de operações com falha | A preencher |
+| Reenviar com o servidor falhando | Tocar no aviso vermelho com a simulação ainda ligada | A operação volta para a fila com tentativas zeradas (aviso amarelo) | A preencher |
+| Falha sobrevive ao fechar o app | Fechar e reabrir o app com a operação em falha | O aviso vermelho continua e nada é reenviado sozinho | A preencher |
+| Reenviar com o servidor corrigido | Desligar a simulação e tocar no aviso vermelho | A operação é enviada, o aviso some e o item fica "Sincronizado" | A preencher |
+| Remover item com operação com falha | Remover o item depois do aviso vermelho | O aviso vermelho some | A preencher |
+
 ## Limitações conhecidas
 
 - **Sem recarga automática ao reconectar.** A tela só tenta de novo quando o usuário rola até o fim, puxa para atualizar ou toca no banner. A causa é que o app ainda não detecta mudanças de conectividade: o `onEndReached` só dispara ao chegar perto do fim da lista, e o banner só some quando uma requisição dá certo. Será resolvido com `@react-native-community/netinfo` na etapa de sincronização.
