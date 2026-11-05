@@ -1,17 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Button,
-  ActivityIndicator,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, FlatList, Button, ActivityIndicator, StyleSheet } from 'react-native';
 import ProductCard from '../components/ProductCard';
+import StatusBanner from '../components/StatusBanner';
 import { getProducts, PAGE_SIZE } from '../services/productsService';
+import { useConnectivity } from '../context/ConnectivityContext';
 
 export default function ProductListScreen({ navigation }) {
+  const { isOnline } = useConnectivity();
   const [products, setProducts] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true); // primeira carga
@@ -19,7 +14,10 @@ export default function ProductListScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false); // puxar para atualizar
   const [error, setError] = useState(null);
   const [fromCache, setFromCache] = useState(false); // dados vindos do SQLite
+  const [imageReloadKey, setImageReloadKey] = useState(0); // força imagens a recarregar
   const isFetching = useRef(false); // evita duas buscas ao mesmo tempo
+  const listRef = useRef(null); // acesso à FlatList, para voltar ao topo
+  const wasOnline = useRef(isOnline); // estado da conexão na última verificação
 
   const loadProducts = useCallback(
     async (reset = false) => {
@@ -33,6 +31,13 @@ export default function ProductListScreen({ navigation }) {
         setTotal(data.total);
         setFromCache(data.fromCache);
         setError(null);
+
+        if (reset) {
+          // A lista foi trocada: volta ao topo
+          listRef.current?.scrollToOffset({ offset: 0, animated: false });
+          // Dados novos da API: as imagens que falharam offline tentam de novo
+          if (!data.fromCache) setImageReloadKey((key) => key + 1);
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -49,6 +54,25 @@ export default function ProductListScreen({ navigation }) {
   useEffect(() => {
     loadProducts(true);
   }, []);
+
+  // Quando a conexão volta, tenta de novo sozinha (o toque nos avisos continua valendo)
+  useEffect(() => {
+    const reconnected = isOnline && !wasOnline.current;
+    wasOnline.current = isOnline;
+    if (!reconnected) return;
+
+    if (products.length === 0) {
+      // Estava na tela de erro: recarrega do zero, com o spinner
+      setLoading(true);
+      loadProducts(true);
+    } else if (fromCache) {
+      // Mostrava dados salvos: troca pelos dados da API
+      loadProducts(true);
+    } else if (error) {
+      // Falhou ao carregar mais: continua de onde parou
+      loadProducts();
+    }
+  }, [isOnline, products.length, fromCache, error, loadProducts]);
 
   function handleEndReached() {
     // Só pede mais se ainda há produtos e nada está carregando
@@ -88,23 +112,28 @@ export default function ProductListScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {error && (
-        <TouchableOpacity onPress={() => loadProducts()}>
-          <Text style={styles.banner}>{error} Toque para tentar novamente.</Text>
-        </TouchableOpacity>
+        <StatusBanner
+          type="error"
+          text={`${error} Toque para tentar novamente.`}
+          onPress={() => loadProducts()}
+        />
       )}
       {!error && fromCache && (
-        <TouchableOpacity onPress={() => loadProducts(true)}>
-          <Text style={styles.notice}>
-            Sem conexão. Exibindo dados salvos. Toque para atualizar.
-          </Text>
-        </TouchableOpacity>
+        <StatusBanner
+          type="warning"
+          text="Não foi possível atualizar. Exibindo dados salvos. Toque para tentar novamente."
+          onPress={() => loadProducts(true)}
+        />
       )}
       <FlatList
+        ref={listRef}
         data={products}
+        extraData={imageReloadKey}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
           <ProductCard
             product={item}
+            reloadKey={imageReloadKey}
             onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
           />
         )}
@@ -122,7 +151,5 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f2f2f2' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 12 },
   errorText: { fontSize: 16, textAlign: 'center' },
-  banner: { backgroundColor: '#fdecea', color: '#b71c1c', padding: 8, textAlign: 'center' },
-  notice: { backgroundColor: '#fff8e1', color: '#8a6d00', padding: 8, textAlign: 'center' },
   footer: { marginVertical: 16 },
 });
