@@ -17,7 +17,7 @@ A API usada é a [DummyJSON](https://dummyjson.com), sugerida no desafio. Ela **
 **Produtos**
 - Listagem com nome, imagem e preço, paginada de 20 em 20 (carrega mais ao rolar) e com "puxar para atualizar".
 - Tela de detalhes com imagem, nome, preço, categoria e descrição.
-- Cada produto consultado é salvo no SQLite. Sem conexão, a lista e os detalhes aparecem a partir dos dados salvos, com um aviso.
+- Cada produto consultado é salvo no SQLite. Sem conexão, a lista e os detalhes aparecem a partir dos dados salvos, com um aviso. As imagens já vistas online ficam em cache no aparelho e continuam aparecendo offline.
 
 **Carrinho**
 - Adicionar produtos, alterar a quantidade e remover itens.
@@ -31,7 +31,7 @@ A API usada é a [DummyJSON](https://dummyjson.com), sugerida no desafio. Ela **
 - Ao reconectar: as pendentes são enviadas na ordem em que foram criadas, sem reenviar as que já foram sincronizadas.
 
 **Erros e avisos**
-- Mensagens claras para falhas de conexão e erros do servidor, com botão ou toque para tentar de novo.
+- Mensagens claras para falhas de conexão e erros do servidor. Ao reconectar, a lista, os detalhes e as operações pendentes se atualizam sozinhos; os avisos continuam tocáveis para tentar de novo na hora.
 - Aviso permanente no carrinho com a quantidade de operações aguardando sincronização, e se o app está sem conexão.
 - Falhas na sincronização mantêm a operação na fila para nova tentativa. Depois de 5 erros do servidor, a operação é marcada como falha, o usuário é avisado e pode reenviá-la com um toque.
 
@@ -45,6 +45,7 @@ A API usada é a [DummyJSON](https://dummyjson.com), sugerida no desafio. Ela **
 | `expo-sqlite` | Persistência local |
 | `@react-native-community/netinfo` | Detecção de conectividade |
 | `expo-crypto` | Identificador único (UUID) de cada operação |
+| `expo-image` | Imagens com cache em disco, para exibição offline |
 | React Navigation (native stack) | Navegação entre telas |
 | Context API | Estado compartilhado (carrinho e conectividade) |
 | `fetch` | Chamadas HTTP, com tempo limite de 10 segundos |
@@ -188,12 +189,13 @@ As telas não falam direto com o banco nem com a API: elas chamam os **serviços
 - **Detalhes: SQLite primeiro, API depois.** A tela abre na hora com o que está salvo e se atualiza quando a API responde.
 - **Context API em vez de Redux.** O estado compartilhado é pequeno (carrinho e conectividade), e a Context API resolve sem dependência extra.
 - **Total calculado em centavos**, para evitar erros de arredondamento de decimais em JavaScript.
+- **Atualizar sozinho ao reconectar.** A lista e os detalhes buscam de novo quando o NetInfo informa a volta da conexão, se estavam mostrando dados salvos ou uma falha. Operações com falha (5 erros do servidor) continuam com reenvio só manual, porque reconectar não resolve um erro do servidor.
 
 ## Limitações conhecidas
 
 - **Entrega "pelo menos uma vez".** Se o app fechar depois de a API responder e antes de a operação ser marcada como `synced`, ela é enviada de novo na reabertura. Uma API real resolveria com um cabeçalho de idempotência usando o `operation_uuid`. Como a DummyJSON só simula as escritas, o identificador fica como controle local.
 - **Só a inclusão no carrinho é enviada.** Alterar a quantidade ou remover itens acontece só no aparelho, então a quantidade enviada à API pode ser menor que a do carrinho. Uma evolução natural é criar outros tipos de operação na mesma fila.
-- **Imagens offline.** O SQLite guarda só o endereço da imagem. Sem conexão, as imagens aparecem apenas se o sistema as tiver em cache.
+- **Imagens offline.** As imagens ficam em cache de disco (`expo-image`). Aparecem offline só se já tiverem carregado online ao menos uma vez, e o sistema pode limpar esse cache para liberar espaço.
 - **Operações com falha não são reenviadas automaticamente**, de propósito, para não repetir uma falha permanente. O reenvio é manual.
 - **Sem login:** o carrinho é sempre do usuário `1`.
 - **Sem testes automatizados.** Os fluxos foram verificados manualmente, e o registro está em `docs/TESTES.md`.

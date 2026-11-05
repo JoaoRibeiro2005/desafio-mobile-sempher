@@ -23,6 +23,7 @@ Escrevi isto antes de começar a programar para ter um mapa do que preciso fazer
 | Framework | React Native com Expo | Mais simples de configurar e testar no celular com o Expo Go |
 | Linguagem | JavaScript | Exigido pelo desafio |
 | SQLite | `expo-sqlite` | Biblioteca oficial do Expo, funciona direto no Expo Go |
+| Imagens | `expo-image` | Cache em disco, para as imagens aparecerem offline |
 | Conectividade | `@react-native-community/netinfo` | Detecta quando fica online/offline e avisa na mudança |
 | HTTP | `fetch` nativo | Não precisa de biblioteca extra para esse volume de requisições |
 | Navegação | React Navigation (stack) | Padrão do ecossistema, três telas simples |
@@ -205,3 +206,8 @@ Cada etapa deve virar um ou poucos commits pequenos, no formato `tipo: descriç�
 - **Aviso de pendentes antecipado:** a tela do carrinho já mostra quantas operações aguardam sincronização. O restante do tratamento de erros fica na etapa 8.
 - **Operações com falha:** o carrinho mostra um aviso vermelho com a quantidade de operações `failed` e permite reenviá-las. O reenvio devolve as operações para a fila com as tentativas zeradas. Elas continuam sem reenvio automático, de propósito, para não repetir uma falha permanente indefinidamente.
 - **`StatusBanner`:** componente criado para os avisos do carrinho. As telas de lista e detalhes mantêm os avisos próprios.
+- **Imagens com cache em disco:** o `Image` do React Native foi trocado pelo do `expo-image` (com `cachePolicy="memory-disk"`) na lista, nos detalhes e no carrinho. Antes, no iOS, as imagens sumiam ao abrir o carrinho no modo avião, mesmo já tendo carregado, porque o SQLite guarda só o endereço da imagem.
+- **Detalhes atualizam ao reconectar:** a tela ouve o `useConnectivity()` e busca de novo quando a conexão volta, se estava mostrando dados salvos. O aviso amarelo passou a ser tocável e usa o `StatusBanner`.
+- **Lista atualiza ao reconectar:** mesma ideia. Na volta da conexão, a lista recarrega do zero se estava sem produtos ou com dados salvos, e continua de onde parou se tinha falhado ao carregar mais. Os avisos usam o `StatusBanner` e continuam tocáveis.
+- **Detecção da reconexão:** cada tela guarda o estado anterior da conexão num `useRef` e só age na passagem de offline para online, para não refazer a busca quando já abre online.
+- **Operações com falha continuam só manuais:** elas falharam por erro do servidor, não por falta de conexão, então reenviar a cada reconexão só repetiria a falha.
