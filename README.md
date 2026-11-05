@@ -57,7 +57,9 @@ A API usada é a [DummyJSON](https://dummyjson.com), sugerida no desafio. Ela **
 
 - [Node.js](https://nodejs.org) (desenvolvido com a v24.11.0) e npm
 - [Git](https://git-scm.com)
-- O app **Expo Go** no celular (App Store ou Google Play), com o celular na **mesma rede Wi-Fi** do computador
+- Um celular com o app **Expo Go**, na **mesma rede Wi-Fi** do computador:
+  - iPhone: [Expo Go na App Store](https://apps.apple.com/app/expo-go/id982107779) (testado)
+  - Android: [Expo Go na Google Play](https://play.google.com/store/apps/details?id=host.exp.exponent) (não testado)
 
 ### Instalação e execução
 
@@ -80,7 +82,7 @@ Nenhuma. A API é pública e não exige chave, e o projeto não usa variáveis d
 - **O app não abre pelo QR code:** confirme que o celular e o computador estão na mesma rede Wi-Fi.
 - **Testar o modo offline:** com o app já aberto, ative o modo avião do celular. Não recarregue o app com o modo avião ligado, porque o Expo Go busca o código no computador.
 - O app foi testado em um iPhone, pelo Expo Go. O Android não foi testado.
-- **"Project is incompatible with this version of Expo Go":** o projeto usa o Expo SDK 58. O Expo Go precisa suportar essa versão. Se a versão da loja for mais nova, é possível instalar uma versão compatível do Expo Go pelo site do Expo ou rodar o app em um emulador com `npx expo start` e a tecla `a` (Android) ou `i` (iOS, só em Mac).
+- **"Project is incompatible with this version of Expo Go":** o projeto usa o Expo SDK 58, e o Expo Go precisa suportar essa versão. Ele foi testado com o Expo Go da App Store em novembro de 2026, mas a versão das lojas às vezes demora a acompanhar o SDK mais novo. Atualize o Expo Go pela loja e, se não resolver, rode num emulador: com o emulador aberto, `npx expo start` e a tecla `a` (Android, com Android Studio) ou `i` (iOS, só em Mac com Xcode). Para o simulador do iOS, o Expo oferece o Expo Go em [expo.dev/go](https://expo.dev/go).
 
 ## Persistência local (SQLite)
 
