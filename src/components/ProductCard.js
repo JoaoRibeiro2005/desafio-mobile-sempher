@@ -1,10 +1,19 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
 import { formatPrice } from '../utils/formatPrice';
 
-export default function ProductCard({ product, onPress }) {
+export default function ProductCard({ product, onPress, reloadKey = 0 }) {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
-      <Image source={{ uri: product.thumbnail }} style={styles.image} />
+      {/* cachePolicy guarda a imagem em disco: aparece offline se já carregou antes */}
+      {/* Quando o reloadKey muda, a imagem é recriada e tenta baixar de novo */}
+      <Image
+        key={reloadKey}
+        source={{ uri: product.thumbnail }}
+        style={styles.image}
+        contentFit="cover"
+        cachePolicy="memory-disk"
+      />
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={2}>
           {product.title}

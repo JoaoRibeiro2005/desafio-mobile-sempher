@@ -1,4 +1,5 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
 import { formatPrice } from '../utils/formatPrice';
 
 export default function CartItem({ item, onIncrease, onDecrease, onRemove }) {
@@ -7,7 +8,13 @@ export default function CartItem({ item, onIncrease, onDecrease, onRemove }) {
 
   return (
     <View style={styles.card}>
-      <Image source={{ uri: item.thumbnail }} style={styles.image} />
+      {/* Imagem em cache de disco: continua aparecendo no modo avião */}
+      <Image
+        source={{ uri: item.thumbnail }}
+        style={styles.image}
+        contentFit="cover"
+        cachePolicy="memory-disk"
+      />
       <View style={styles.info}>
         <Text style={styles.title} numberOfLines={2}>
           {item.title}
