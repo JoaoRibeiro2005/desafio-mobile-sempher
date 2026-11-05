@@ -98,7 +98,19 @@ Cada linha deve ser preenchida só depois de executar o teste.
 | Reenviar com o servidor corrigido | Desligar a simulação e tocar no aviso vermelho | A operação é enviada, o aviso some e o item fica "Sincronizado" | OK |
 | Remover item com operação com falha | Remover o item depois do aviso vermelho | O aviso vermelho some | OK |
 
+## Ajustes depois da etapa 8: imagens offline e atualização ao reconectar
+
+| Cenário | Como testei | Resultado esperado | Resultado |
+| --- | --- | --- | --- |
+| Imagens do carrinho offline | Abrir o carrinho com internet, voltar, ligar o modo avião e abrir de novo | As imagens continuam aparecendo | OK |
+| Imagens em cache de disco | Fechar o Expo Go, abrir com internet, ligar o modo avião antes de abrir o carrinho | As imagens aparecem, vindas do disco | OK |
+| Detalhes ao reconectar | Abrir um produto no modo avião e desligar o modo avião, sem tocar em nada | O aviso amarelo some sozinho | OK |
+| Toque no aviso dos detalhes | Abrir um produto no modo avião, desligar e tocar no aviso | Atualiza na hora | OK |
+| Lista ao reconectar (dados salvos) | Puxar para atualizar no modo avião e desligar o modo avião, sem tocar em nada | O aviso some, a lista volta ao topo com as imagens | OK |
+| Lista ao reconectar (falha ao carregar mais) | Com cache pequeno, rolar até o fim no modo avião e desligar o modo avião | Os próximos produtos entram sozinhos | OK |
+| Toque no aviso da lista | Repetir o teste dos dados salvos tocando no aviso | Atualiza na hora | OK |
+
 ## Limitações conhecidas
 
-- **Sem recarga automática ao reconectar.** A tela só tenta de novo quando o usuário rola até o fim, puxa para atualizar ou toca no banner. A causa é que o app ainda não detecta mudanças de conectividade: o `onEndReached` só dispara ao chegar perto do fim da lista, e o banner só some quando uma requisição dá certo. Será resolvido com `@react-native-community/netinfo` na etapa de sincronização.
+- **Sem recarga automática ao reconectar.** A tela só tenta de novo quando o usuário rola até o fim, puxa para atualizar ou toca no banner. A causa é que o app ainda não detecta mudanças de conectividade: o `onEndReached` só dispara ao chegar perto do fim da lista, e o banner só some quando uma requisição dá certo. Será resolvido com `@react-native-community/netinfo` na etapa de sincronização. Resolvido depois da etapa 8: a lista e os detalhes atualizam sozinhos quando a conexão volta.
 - **Mitigação atual:** o banner de erro é tocável e tenta carregar a próxima página.
