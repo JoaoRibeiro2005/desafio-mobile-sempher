@@ -1,15 +1,10 @@
-import { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  Button,
-  ActivityIndicator,
-  StyleSheet,
-} from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import { View, Text, ScrollView, Button, ActivityIndicator, StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
+import StatusBanner from '../components/StatusBanner';
 import { getCachedProduct, fetchProduct } from '../services/productsService';
 import { useCart } from '../context/CartContext';
+import { useConnectivity } from '../context/ConnectivityContext';
 import { formatPrice } from '../utils/formatPrice';
 
 export default function ProductDetailScreen({ route }) {
@@ -17,11 +12,13 @@ export default function ProductDetailScreen({ route }) {
   const { productId } = route.params;
 
   const { items, addItem, error: cartError } = useCart();
+  const { isOnline } = useConnectivity();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [fromCache, setFromCache] = useState(false); // API falhou, mostrando dados salvos
-  const [attempt, setAttempt] = useState(0); // muda para tentar de novo
+  const [attempt, setAttempt] = useState(0); // muda para buscar de novo
+  const wasOnline = useRef(isOnline); // estado da conexão na última verificação
 
   // Quantas unidades deste produto já estão no carrinho
   const quantityInCart = items.find((item) => item.product_id === productId)?.quantity ?? 0;
@@ -63,6 +60,20 @@ export default function ProductDetailScreen({ route }) {
     };
   }, [productId, attempt]);
 
+  // Quando a conexão volta e a tela mostra dados salvos, busca de novo sozinha
+  useEffect(() => {
+    if (isOnline && !wasOnline.current && fromCache) {
+      setAttempt((value) => value + 1);
+    }
+    wasOnline.current = isOnline;
+  }, [isOnline, fromCache]);
+
+  // Tentar de novo sem esconder o produto que já está na tela
+  function handleRefresh() {
+    setAttempt((value) => value + 1);
+  }
+
+  // Tentar de novo a partir da tela de erro
   function handleRetry() {
     setError(null);
     setLoading(true);
@@ -89,9 +100,20 @@ export default function ProductDetailScreen({ route }) {
   return (
     <ScrollView style={styles.container}>
       {fromCache && (
-        <Text style={styles.notice}>Não foi possível atualizar. Exibindo dados salvos.</Text>
+        <StatusBanner
+          type="warning"
+          text="Não foi possível atualizar. Exibindo dados salvos. Toque para tentar novamente."
+          onPress={handleRefresh}
+        />
       )}
-      <Image source={{ uri: product.thumbnail }} style={styles.image} resizeMode="contain" />
+      {/* A key com o attempt recria a imagem, para ela tentar baixar de novo após reconectar */}
+      <Image
+        key={`${product.thumbnail}-${attempt}`}
+        source={{ uri: product.thumbnail }}
+        style={styles.image}
+        contentFit="contain"
+        cachePolicy="memory-disk"
+      />
       <View style={styles.content}>
         <Text style={styles.title}>{product.title}</Text>
         <Text style={styles.price}>{formatPrice(product.price)}</Text>
@@ -112,7 +134,6 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 12 },
   errorText: { fontSize: 16, textAlign: 'center' },
-  notice: { backgroundColor: '#fff8e1', color: '#8a6d00', padding: 8, textAlign: 'center' },
   image: { width: '100%', height: 280, backgroundColor: '#f2f2f2' },
   content: { padding: 16, gap: 8 },
   title: { fontSize: 22, fontWeight: 'bold' },
